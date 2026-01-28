@@ -7,6 +7,7 @@ import { prisma } from './prismaClient.js';
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/users.routes.js';
 import productRoutes from './routes/products.routes.js';
+import orderRoutes from './routes/orders.routes.js';
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ app.get('/health', async (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/orders', orderRoutes);
 
 const PORT = process.env.PORT || 5000;
 

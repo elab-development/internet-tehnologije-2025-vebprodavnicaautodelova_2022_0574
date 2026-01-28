@@ -13,14 +13,24 @@ enum UserRole {
   admin
 }
 
+enum OrderStatus {
+  pending
+  processing
+  shipped
+  delivered
+  cancelled
+}
+
 model User {
   id              Int        @id @default(autoincrement())
   fullName        String
   email           String     @unique
   passwordHash    String
   role            UserRole   @default(customer)
-  deliveryAddress  String?
+  deliveryAddress String?
   createdAt       DateTime   @default(now())
+
+  orders          Order[]
 }
 
 model Product {
@@ -36,6 +46,39 @@ model Product {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
+  orderItems    OrderItem[]
+
   @@index([category])
   @@index([isActive])
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  status      OrderStatus @default(pending)
+  address     String
+  totalAmount Decimal     @db.Decimal(10, 2)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  userId      Int
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Restrict)
+  items       OrderItem[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  quantity  Int
+  price     Decimal @db.Decimal(10, 2)
+  orderId   Int
+  productId Int
+
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+  @@index([productId])
+  @@unique([orderId, productId])
 }
