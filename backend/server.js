@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import { prisma } from './prismaClient.js';
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/users.routes.js';
+import productRoutes from './routes/products.routes.js';
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.get('/health', async (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/products', productRoutes);
 
 const PORT = process.env.PORT || 5000;
 
