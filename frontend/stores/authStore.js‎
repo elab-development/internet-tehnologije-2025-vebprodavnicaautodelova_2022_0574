@@ -1,0 +1,80 @@
+import { create } from 'zustand';
+import { api } from '../lib/api';
+
+export const useAuthStore = create((set, get) => ({
+  user: null,
+  isLoading: false,
+  error: null,
+
+  isAuthenticated: () => Boolean(get().user),
+  hasRole: (...roles) => roles.includes(get().user?.role),
+
+  clearError: () => set({ error: null }),
+
+  /**
+   * GET /api/auth/me
+   * Koristi cookie token koji backend postavlja.
+   */
+  fetchMe: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const data = await api('/api/auth/me', { method: 'GET' });
+      set({ user: data.user, isLoading: false });
+      return data.user;
+    } catch (err) {
+      set({ user: null, isLoading: false, error: null });
+      return null;
+    }
+  },
+
+  /**
+   * POST /api/auth/register
+   * Body: { fullName, email, password, role }
+   */
+  register: async ({ fullName, email, password, role = 'customer' }) => {
+    set({ isLoading: true, error: null });
+    try {
+      const data = await api('/api/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({ fullName, email, password, role }),
+      });
+      set({ user: data.user, isLoading: false });
+      return data.user;
+    } catch (err) {
+      set({ isLoading: false, error: err.message || 'Register failed' });
+      throw err;
+    }
+  },
+
+  /**
+   * POST /api/auth/login
+   * Body: { email, password }
+   */
+  login: async ({ email, password }) => {
+    set({ isLoading: true, error: null });
+    try {
+      const data = await api('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      });
+      set({ user: data.user, isLoading: false });
+      return data.user;
+    } catch (err) {
+      set({ isLoading: false, error: err.message || 'Login failed' });
+      throw err;
+    }
+  },
+
+  /**
+   * POST /api/auth/logout
+   */
+  logout: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      await api('/api/auth/logout', { method: 'POST' });
+    } catch (err) {
+    } finally {
+      set({ user: null, isLoading: false, error: null });
+    }
+  },
+}));
