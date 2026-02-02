@@ -10,10 +10,12 @@ import {
 
 import LogoImg from '../assets/logo.png';
 import { useAuthStore } from '../stores/authStore';
+import { useCartStore } from '../stores/cartStore';
 
 export default function Navbar() {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
+  const cartCount = useCartStore((s) => s.itemsCount);
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -86,10 +88,15 @@ export default function Navbar() {
             <div className='ml-2 flex items-center gap-2'>
               <Link
                 to='/cart'
-                className='inline-flex items-center justify-center rounded-md px-3 py-2 text-neutral-200 hover:bg-neutral-800 hover:text-white'
+                className='relative inline-flex items-center justify-center rounded-md px-3 py-2 text-neutral-200 hover:bg-neutral-800 hover:text-white'
                 title='Cart'
               >
                 <FiShoppingCart className='h-5 w-5' />
+                {cartCount > 0 ? (
+                  <span className='absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-600 px-1 text-xs font-bold text-white'>
+                    {cartCount > 99 ? '99+' : cartCount}
+                  </span>
+                ) : null}
               </Link>
 
               {/* Profile dropdown */}
@@ -173,6 +180,9 @@ export default function Navbar() {
                   >
                     <FiShoppingCart className='h-5 w-5' />
                     Cart
+                    <span className='ml-auto rounded-full bg-red-600 px-2 py-0.5 text-xs font-bold text-white'>
+                      {cartCount > 99 ? '99+' : cartCount}
+                    </span>
                   </Link>
                   <Link
                     to='/profile'
