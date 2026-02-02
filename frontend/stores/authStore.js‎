@@ -8,6 +8,7 @@ export const useAuthStore = create((set, get) => ({
 
   isAuthenticated: () => Boolean(get().user),
   hasRole: (...roles) => roles.includes(get().user?.role),
+  setUser: (user) => set({ user }),
 
   clearError: () => set({ error: null }),
 
