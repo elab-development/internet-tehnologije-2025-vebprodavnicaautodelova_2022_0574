@@ -11,9 +11,9 @@ import {
 
 const router = Router();
 
+router.get('/product/:productId', listTechReviewsForProduct);
 router.get('/', listTechReviews);
 router.get('/:id', getTechReviewById);
-router.get('/product/:productId', listTechReviewsForProduct);
 
 router.post('/', requireAuth, requireRole('mechanic'), createTechReview);
 router.put('/:id', requireAuth, requireRole('mechanic'), updateTechReview);

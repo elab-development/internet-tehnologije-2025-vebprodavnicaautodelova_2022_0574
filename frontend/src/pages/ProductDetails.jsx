@@ -4,6 +4,7 @@ import { FiArrowLeft, FiPlus } from 'react-icons/fi';
 import { useProductsStore } from '../stores/productsStore';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
+import ProductReviews from '../components/products/ProductReviews';
 
 export default function ProductDetails() {
   const { productId } = useParams();
@@ -168,6 +169,8 @@ export default function ProductDetails() {
           </div>
         </div>
       </div>
+
+      <ProductReviews productId={productId} user={user} />
     </div>
   );
 }
