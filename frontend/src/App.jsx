@@ -4,6 +4,9 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useAuthStore } from './stores/authStore';
 
 import AppLayout from './layouts/AppLayout';
+import RequireAuth from './components/auth/RequireAuth';
+import RequireGuest from './components/auth/RequireGuest';
+import RequireAdmin from './components/auth/RequireAdmin';
 
 import Home from './pages/Home';
 import Products from './pages/Products';
@@ -29,18 +32,29 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<AppLayout />}>
+          {/* Public */}
           <Route path='/' element={<Home />} />
           <Route path='/products' element={<Products />} />
           <Route path='/products/:productId' element={<ProductDetails />} />
 
-          <Route path='/login' element={<Login />} />
-          <Route path='/register' element={<Register />} />
+          {/* Guest-only */}
+          <Route element={<RequireGuest />}>
+            <Route path='/login' element={<Login />} />
+            <Route path='/register' element={<Register />} />
+          </Route>
 
-          <Route path='/profile' element={<Profile />} />
-          <Route path='/cart' element={<Cart />} />
-          <Route path='/checkout' element={<Checkout />} />
-          <Route path='/orders/:orderId' element={<OrderDetails />} />
-          <Route path='/admin' element={<AdminDashboard />} />
+          {/* Auth-only */}
+          <Route element={<RequireAuth />}>
+            <Route path='/profile' element={<Profile />} />
+            <Route path='/cart' element={<Cart />} />
+            <Route path='/checkout' element={<Checkout />} />
+            <Route path='/orders/:orderId' element={<OrderDetails />} />
+          </Route>
+
+          {/* Admin-only */}
+          <Route element={<RequireAdmin />}>
+            <Route path='/admin' element={<AdminDashboard />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>
