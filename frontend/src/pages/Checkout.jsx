@@ -69,7 +69,7 @@ export default function Checkout() {
       });
 
       clearCart();
-      navigate(`/order/${order.id}`);
+      navigate(`/orders/${order.id}`);
     } catch {}
   }
 

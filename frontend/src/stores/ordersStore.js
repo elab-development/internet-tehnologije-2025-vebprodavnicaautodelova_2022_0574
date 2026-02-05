@@ -24,7 +24,11 @@ export const useOrdersStore = create((set, get) => ({
   selectedOrder: null,
 
   isLoading: false,
+  isSaving: false,
   error: null,
+  success: null,
+
+  clearMessages: () => set({ error: null, success: null }),
 
   setQuery: (patch) => set(patch),
 
@@ -38,7 +42,7 @@ export const useOrdersStore = create((set, get) => ({
     }),
 
   createOrder: async ({ items, address }) => {
-    set({ isLoading: true, error: null });
+    set({ isSaving: true, error: null, success: null });
     try {
       const res = await fetch(`${API_URL}/api/orders`, {
         method: 'POST',
@@ -50,10 +54,13 @@ export const useOrdersStore = create((set, get) => ({
       const data = await res.json();
       if (!res.ok) throw new Error(data?.message || 'Failed to create order');
 
-      set({ isLoading: false });
+      set({ isSaving: false, success: 'Order created.' });
       return data.order;
     } catch (e) {
-      set({ isLoading: false, error: e.message || 'Failed to create order' });
+      set({
+        isSaving: false,
+        error: e.message || 'Failed to create order',
+      });
       throw e;
     }
   },
@@ -107,7 +114,7 @@ export const useOrdersStore = create((set, get) => ({
   },
 
   updateOrderStatus: async (id, status) => {
-    set({ isLoading: true, error: null });
+    set({ isSaving: true, error: null, success: null });
     try {
       const res = await fetch(`${API_URL}/api/orders/${id}/status`, {
         method: 'PUT',
@@ -123,10 +130,10 @@ export const useOrdersStore = create((set, get) => ({
         set({ selectedOrder: data.order });
       }
 
-      set({ isLoading: false });
+      set({ isSaving: false, success: 'Status updated.' });
       return data.order;
     } catch (e) {
-      set({ isLoading: false, error: e.message || 'Failed to update status' });
+      set({ isSaving: false, error: e.message || 'Failed to update status' });
       throw e;
     }
   },
