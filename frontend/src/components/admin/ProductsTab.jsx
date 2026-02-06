@@ -1,109 +1,64 @@
 import { useEffect, useMemo, useState } from 'react';
-import { FiEdit2, FiPlus, FiRefreshCw, FiTrash2 } from 'react-icons/fi';
-import { useProductsStore } from '../../stores/productsStore';
-import ProductModal from './products/ProductModal';
+import { FiRefreshCw } from 'react-icons/fi';
+import { useUsersStore } from '../../stores/usersStore';
+import { useAuthStore } from '../../stores/authStore';
 
-export default function ProductsTab() {
+export default function UsersTab() {
+  const me = useAuthStore((s) => s.user);
+
   const {
-    products,
+    users,
     isLoading,
-    isSaving,
     error,
     success,
     clearMessages,
-    fetchProducts,
-    createProduct,
-    updateProduct,
-    deleteProduct,
-  } = useProductsStore();
+    fetchAllUsers,
+    updateUserRole,
+  } = useUsersStore();
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState(null);
+  const [roleDraft, setRoleDraft] = useState({});
 
   useEffect(() => {
-    fetchProducts();
+    fetchAllUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const sorted = useMemo(() => {
-    return Array.isArray(products) ? products : [];
-  }, [products]);
+  useEffect(() => {
+    const next = {};
+    for (const u of users) next[u.id] = u.role;
+    setRoleDraft(next);
+  }, [users]);
 
-  function openCreate() {
+  const roleOptions = useMemo(() => ['customer', 'mechanic', 'admin'], []);
+
+  async function handleSave(userId) {
     clearMessages();
-    setEditing(null);
-    setModalOpen(true);
-  }
-
-  function openEdit(p) {
-    clearMessages();
-    setEditing(p);
-    setModalOpen(true);
-  }
-
-  async function handleDelete(p) {
-    clearMessages();
-    const ok = confirm(
-      `Deactivate product "${p.name}"?\n(This will remove it from public listing.)`,
-    );
-    if (!ok) return;
-
-    await deleteProduct(p.id);
-    await fetchProducts();
-  }
-
-  async function handleSubmit(form) {
-    clearMessages();
-
-    if (editing) {
-      await updateProduct(editing.id, form);
-    } else {
-      await createProduct(form);
-    }
-
-    setModalOpen(false);
-    setEditing(null);
-    await fetchProducts();
+    const role = roleDraft[userId];
+    await updateUserRole(userId, role);
   }
 
   return (
-    <div
-      className={[
-        'min-w-0 rounded-2xl border border-neutral-800 bg-neutral-900 p-4 sm:p-5',
-        modalOpen ? 'overflow-visible' : 'overflow-hidden',
-      ].join(' ')}
-    >
+    <div className='min-w-0 overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900 p-4 sm:p-5'>
       <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
         <div>
-          <h2 className='text-lg font-semibold text-white'>Products</h2>
+          <h2 className='text-lg font-semibold text-white'>Users</h2>
           <p className='mt-1 text-sm text-neutral-400'>
-            Create, edit and deactivate products.
+            View all users and manage roles.
           </p>
         </div>
 
-        <div className='flex flex-col gap-2 sm:flex-row sm:items-center'>
-          <button
-            onClick={() => {
-              clearMessages();
-              fetchProducts();
-            }}
-            disabled={isLoading}
-            className='inline-flex items-center justify-center gap-2 rounded-lg border border-neutral-800 bg-neutral-950 px-4 py-2 text-sm font-semibold text-neutral-200 hover:bg-neutral-800 disabled:opacity-60'
-            type='button'
-          >
-            <FiRefreshCw className={isLoading ? 'animate-spin' : ''} />
-            Refresh
-          </button>
-
-          <button
-            onClick={openCreate}
-            className='inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-500'
-            type='button'
-          >
-            <FiPlus />
-            New product
-          </button>
-        </div>
+        <button
+          onClick={() => {
+            clearMessages();
+            fetchAllUsers();
+          }}
+          disabled={isLoading}
+          className='inline-flex items-center justify-center gap-2 rounded-lg border border-neutral-800 bg-neutral-950 px-4 py-2 text-sm font-semibold text-neutral-200 hover:bg-neutral-800 disabled:opacity-60'
+          type='button'
+        >
+          <FiRefreshCw className={isLoading ? 'animate-spin' : ''} />
+          Refresh
+        </button>
       </div>
 
       {error ? (
@@ -119,13 +74,12 @@ export default function ProductsTab() {
       ) : null}
 
       <div className='mt-4 -mx-4 min-w-0 max-w-full overflow-x-auto px-4'>
-        <table className='w-full min-w-[1100px] table-auto overflow-hidden rounded-xl border border-neutral-800'>
+        <table className='w-full min-w-245 table-auto overflow-hidden rounded-xl border border-neutral-800'>
           <thead className='bg-neutral-950'>
             <tr className='text-left text-xs uppercase tracking-wide text-neutral-400'>
-              <th className='whitespace-nowrap px-4 py-3'>Product</th>
-              <th className='whitespace-nowrap px-4 py-3'>Category</th>
-              <th className='whitespace-nowrap px-4 py-3'>Price</th>
-              <th className='whitespace-nowrap px-4 py-3'>Stock</th>
+              <th className='whitespace-nowrap px-4 py-3'>User</th>
+              <th className='whitespace-nowrap px-4 py-3'>Email</th>
+              <th className='whitespace-nowrap px-4 py-3'>Role</th>
               <th className='whitespace-nowrap px-4 py-3'>Created</th>
               <th className='whitespace-nowrap px-4 py-3'>Actions</th>
             </tr>
@@ -134,98 +88,91 @@ export default function ProductsTab() {
           <tbody className='divide-y divide-neutral-800 bg-neutral-900'>
             {isLoading ? (
               <tr>
-                <td className='px-4 py-4 text-sm text-neutral-300' colSpan={6}>
-                  Loading products...
+                <td className='px-4 py-4 text-sm text-neutral-300' colSpan={5}>
+                  Loading users...
                 </td>
               </tr>
-            ) : sorted.length === 0 ? (
+            ) : users.length === 0 ? (
               <tr>
-                <td className='px-4 py-4 text-sm text-neutral-300' colSpan={6}>
-                  No products found.
+                <td className='px-4 py-4 text-sm text-neutral-300' colSpan={5}>
+                  No users found.
                 </td>
               </tr>
             ) : (
-              sorted.map((p) => {
-                const img =
-                  Array.isArray(p.images) && p.images[0]
-                    ? p.images[0]?.url || p.images[0]?.secureUrl
-                    : null;
+              users.map((u) => {
+                const isMe = me?.id === u.id;
 
                 return (
-                  <tr key={p.id} className='align-top'>
+                  <tr key={u.id} className='align-top'>
                     <td className='px-4 py-3'>
-                      <div className='flex min-w-[320px] items-start gap-3'>
-                        <div className='h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-neutral-800 bg-neutral-950'>
-                          {img ? (
-                            <img
-                              src={img}
-                              alt={p.name}
-                              className='h-full w-full object-cover'
-                            />
-                          ) : null}
-                        </div>
-                        <div className='min-w-0'>
-                          <div className='truncate text-sm font-semibold text-white'>
-                            {p.name}
-                          </div>
-                          <div className='mt-0.5 text-xs text-neutral-500'>
-                            ID: {p.id}
-                          </div>
-                          <div className='mt-1 line-clamp-2 text-xs text-neutral-400'>
-                            {p.description}
-                          </div>
-                        </div>
+                      <div className='min-w-50 text-sm font-semibold text-white'>
+                        {u.fullName}{' '}
+                        {isMe ? (
+                          <span className='ml-2 rounded-full bg-red-600/15 px-2 py-0.5 text-xs font-semibold text-red-300'>
+                            YOU
+                          </span>
+                        ) : null}
                       </div>
+                      <div className='text-xs text-neutral-500'>ID: {u.id}</div>
+                    </td>
+
+                    <td className='px-4 py-3 text-sm text-neutral-300'>
+                      <div className='min-w-65 wrap-break-word'>{u.email}</div>
                     </td>
 
                     <td className='px-4 py-3'>
-                      <div className='min-w-[180px] text-sm text-neutral-200'>
-                        {p.category}
-                      </div>
-                    </td>
+                      <div className='min-w-45'>
+                        <select
+                          value={roleDraft[u.id] || u.role}
+                          onChange={(e) =>
+                            setRoleDraft((s) => ({
+                              ...s,
+                              [u.id]: e.target.value,
+                            }))
+                          }
+                          className='w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-200 outline-none focus:border-red-500 disabled:opacity-60'
+                          disabled={isLoading || isMe}
+                          title={
+                            isMe
+                              ? 'You cannot change your own role here'
+                              : 'Change role'
+                          }
+                        >
+                          {roleOptions.map((r) => (
+                            <option key={r} value={r}>
+                              {r}
+                            </option>
+                          ))}
+                        </select>
 
-                    <td className='px-4 py-3 text-sm text-neutral-200'>
-                      <div className='min-w-[120px] whitespace-nowrap'>
-                        ${Number(p.price).toFixed(2)}
-                      </div>
-                    </td>
-
-                    <td className='px-4 py-3 text-sm text-neutral-200'>
-                      <div className='min-w-[100px] whitespace-nowrap'>
-                        {p.stock}
+                        {isMe ? (
+                          <div className='mt-1 text-xs text-neutral-500'>
+                            You cannot change your own role.
+                          </div>
+                        ) : null}
                       </div>
                     </td>
 
                     <td className='px-4 py-3 text-sm text-neutral-400'>
-                      <div className='min-w-[140px] whitespace-nowrap'>
-                        {p.createdAt
-                          ? new Date(p.createdAt).toLocaleDateString()
+                      <div className='min-w-35 whitespace-nowrap'>
+                        {u.createdAt
+                          ? new Date(u.createdAt).toLocaleDateString()
                           : '-'}
                       </div>
                     </td>
 
                     <td className='px-4 py-3'>
-                      <div className='min-w-[180px]'>
-                        <div className='flex gap-2'>
-                          <button
-                            onClick={() => openEdit(p)}
-                            className='inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm font-semibold text-neutral-200 hover:bg-neutral-800'
-                            type='button'
-                          >
-                            <FiEdit2 />
-                            Edit
-                          </button>
-
-                          <button
-                            onClick={() => handleDelete(p)}
-                            disabled={isSaving}
-                            className='inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white hover:bg-red-500 disabled:opacity-60'
-                            type='button'
-                            title='Deactivate'
-                          >
-                            <FiTrash2 />
-                          </button>
-                        </div>
+                      <div className='min-w-35'>
+                        <button
+                          onClick={() => handleSave(u.id)}
+                          disabled={
+                            isLoading || isMe || roleDraft[u.id] === u.role
+                          }
+                          className='w-full rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white hover:bg-red-500 disabled:opacity-60'
+                          type='button'
+                        >
+                          Save
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -239,18 +186,6 @@ export default function ProductsTab() {
       <p className='mt-3 text-xs text-neutral-500 sm:hidden'>
         Tip: swipe horizontally to see the whole table.
       </p>
-
-      <ProductModal
-        open={modalOpen}
-        mode={editing ? 'edit' : 'create'}
-        initialProduct={editing}
-        isSaving={isSaving}
-        onClose={() => {
-          setModalOpen(false);
-          setEditing(null);
-        }}
-        onSubmit={handleSubmit}
-      />
     </div>
   );
 }

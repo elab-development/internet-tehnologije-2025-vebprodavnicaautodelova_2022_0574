@@ -95,7 +95,7 @@ export default function Navbar() {
               >
                 <FiShoppingCart className='h-5 w-5' />
                 {cartCount > 0 ? (
-                  <span className='absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-600 px-1 text-xs font-bold text-white'>
+                  <span className='absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-xs font-bold text-white'>
                     {cartCount > 99 ? '99+' : cartCount}
                   </span>
                 ) : null}
@@ -108,9 +108,7 @@ export default function Navbar() {
                   className='inline-flex items-center gap-2 rounded-md bg-neutral-900 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-800'
                 >
                   <FiUser className='h-4 w-4 text-red-500' />
-                  <span className='max-w-[140px] truncate'>
-                    {user.fullName}
-                  </span>
+                  <span className='max-w-35 truncate'>{user.fullName}</span>
                   <FiChevronDown className='h-4 w-4 text-neutral-300' />
                 </button>
 

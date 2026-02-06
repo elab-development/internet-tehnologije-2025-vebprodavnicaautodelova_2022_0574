@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <div className='grid gap-6'>
       <section className='relative overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950'>
-        <div className='relative h-[420px] sm:h-[520px]'>
+        <div className='relative h-105 sm:h-130'>
           <img
             src={heroImg}
             alt='PitStopShop hero'

@@ -65,7 +65,7 @@ export default function ProductDetails() {
       <div className='grid gap-6 rounded-2xl border border-neutral-800 bg-neutral-900 p-4 md:grid-cols-2'>
         {/* Gallery */}
         <div className='grid gap-3'>
-          <div className='aspect-[4/3] overflow-hidden rounded-xl bg-neutral-800'>
+          <div className='aspect-4/3 overflow-hidden rounded-xl bg-neutral-800'>
             {images[activeImg] ? (
               <img
                 src={images[activeImg]}

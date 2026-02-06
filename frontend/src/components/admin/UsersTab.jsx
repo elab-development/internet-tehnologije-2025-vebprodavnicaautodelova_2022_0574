@@ -74,7 +74,7 @@ export default function UsersTab() {
       ) : null}
 
       <div className='mt-4 -mx-4 min-w-0 max-w-full overflow-x-auto px-4'>
-        <table className='w-full min-w-[980px] table-auto overflow-hidden rounded-xl border border-neutral-800'>
+        <table className='w-full min-w-245 table-auto overflow-hidden rounded-xl border border-neutral-800'>
           <thead className='bg-neutral-950'>
             <tr className='text-left text-xs uppercase tracking-wide text-neutral-400'>
               <th className='whitespace-nowrap px-4 py-3'>User</th>
@@ -105,7 +105,7 @@ export default function UsersTab() {
                 return (
                   <tr key={u.id} className='align-top'>
                     <td className='px-4 py-3'>
-                      <div className='min-w-[200px] text-sm font-semibold text-white'>
+                      <div className='min-w-50 text-sm font-semibold text-white'>
                         {u.fullName}{' '}
                         {isMe ? (
                           <span className='ml-2 rounded-full bg-red-600/15 px-2 py-0.5 text-xs font-semibold text-red-300'>
@@ -117,11 +117,11 @@ export default function UsersTab() {
                     </td>
 
                     <td className='px-4 py-3 text-sm text-neutral-300'>
-                      <div className='min-w-[260px] break-words'>{u.email}</div>
+                      <div className='min-w-65 wrap-break-word'>{u.email}</div>
                     </td>
 
                     <td className='px-4 py-3'>
-                      <div className='min-w-[180px]'>
+                      <div className='min-w-45'>
                         <select
                           value={roleDraft[u.id] || u.role}
                           onChange={(e) =>
@@ -154,7 +154,7 @@ export default function UsersTab() {
                     </td>
 
                     <td className='px-4 py-3 text-sm text-neutral-400'>
-                      <div className='min-w-[140px] whitespace-nowrap'>
+                      <div className='min-w-35 whitespace-nowrap'>
                         {u.createdAt
                           ? new Date(u.createdAt).toLocaleDateString()
                           : '-'}
@@ -162,7 +162,7 @@ export default function UsersTab() {
                     </td>
 
                     <td className='px-4 py-3'>
-                      <div className='min-w-[140px]'>
+                      <div className='min-w-35'>
                         <button
                           onClick={() => handleSave(u.id)}
                           disabled={

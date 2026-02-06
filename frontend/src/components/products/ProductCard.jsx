@@ -13,7 +13,7 @@ export default function ProductCard({ product }) {
   return (
     <div className='overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900'>
       <Link to={`/products/${product.id}`} className='block'>
-        <div className='aspect-[4/3] w-full bg-neutral-800'>
+        <div className='aspect-4/3 w-full bg-neutral-800'>
           {imgUrl ? (
             <img
               src={imgUrl}

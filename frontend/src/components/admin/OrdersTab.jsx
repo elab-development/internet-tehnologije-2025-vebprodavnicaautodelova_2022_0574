@@ -91,7 +91,7 @@ export default function OrdersTab() {
       ) : null}
 
       <div className='mt-4 -mx-4 min-w-0 max-w-full overflow-x-auto px-4'>
-        <table className='w-full min-w-[1100px] table-auto overflow-hidden rounded-xl border border-neutral-800'>
+        <table className='w-full min-w-275 table-auto overflow-hidden rounded-xl border border-neutral-800'>
           <thead className='bg-neutral-950'>
             <tr className='text-left text-xs uppercase tracking-wide text-neutral-400'>
               <th className='whitespace-nowrap px-4 py-3'>Order</th>
@@ -133,7 +133,7 @@ export default function OrdersTab() {
                 return (
                   <tr key={o.id} className='align-top'>
                     <td className='px-4 py-3'>
-                      <div className='min-w-[140px] text-sm font-semibold text-white'>
+                      <div className='min-w-35 text-sm font-semibold text-white'>
                         <Link
                           to={`/orders/${o.id}`}
                           className='underline decoration-neutral-700 underline-offset-4 hover:decoration-neutral-300'
@@ -148,13 +148,13 @@ export default function OrdersTab() {
                     </td>
 
                     <td className='px-4 py-3 text-sm text-neutral-200'>
-                      <div className='min-w-[120px] whitespace-nowrap'>
+                      <div className='min-w-30 whitespace-nowrap'>
                         User ID: {o.userId}
                       </div>
                     </td>
 
                     <td className='px-4 py-3'>
-                      <div className='min-w-[180px]'>
+                      <div className='min-w-45'>
                         <select
                           value={nextStatus}
                           onChange={(e) =>
@@ -187,19 +187,19 @@ export default function OrdersTab() {
                     </td>
 
                     <td className='px-4 py-3 text-sm text-neutral-200'>
-                      <div className='min-w-[120px] whitespace-nowrap'>
+                      <div className='min-w-30 whitespace-nowrap'>
                         {formatMoney(o.totalAmount)}
                       </div>
                     </td>
 
                     <td className='px-4 py-3 text-sm text-neutral-200'>
-                      <div className='min-w-[320px] break-words'>
+                      <div className='min-w-[320px] wrap-break-word'>
                         {o.address || '-'}
                       </div>
                     </td>
 
                     <td className='px-4 py-3 text-sm text-neutral-400'>
-                      <div className='min-w-[140px] whitespace-nowrap'>
+                      <div className='min-w-35 whitespace-nowrap'>
                         {o.createdAt
                           ? new Date(o.createdAt).toLocaleDateString()
                           : '-'}
@@ -207,7 +207,7 @@ export default function OrdersTab() {
                     </td>
 
                     <td className='px-4 py-3 text-sm text-neutral-400'>
-                      <div className='min-w-[140px] whitespace-nowrap'>
+                      <div className='min-w-35 whitespace-nowrap'>
                         {o.updatedAt
                           ? new Date(o.updatedAt).toLocaleDateString()
                           : '-'}
@@ -215,7 +215,7 @@ export default function OrdersTab() {
                     </td>
 
                     <td className='px-4 py-3'>
-                      <div className='min-w-[140px]'>
+                      <div className='min-w-35'>
                         <button
                           onClick={() => handleSave(o.id)}
                           disabled={!canSave}
