@@ -4,6 +4,8 @@ import { FiArrowLeft, FiPlus } from 'react-icons/fi';
 import { useProductsStore } from '../stores/productsStore';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
+import { useCurrencyStore } from '../stores/currencyStore';
+import { convertFromUSD, formatCurrency } from '../lib/currency';
 import ProductReviews from '../components/products/ProductReviews';
 
 export default function ProductDetails() {
@@ -12,6 +14,10 @@ export default function ProductDetails() {
     useProductsStore();
   const user = useAuthStore((s) => s.user);
   const addToCart = useCartStore((s) => s.addToCart);
+
+  const currency = useCurrencyStore((s) => s.currency);
+  const rates = useCurrencyStore((s) => s.rates);
+  const rate = rates[currency] || 1;
 
   const [qty, setQty] = useState(1);
   const [activeImg, setActiveImg] = useState(0);
@@ -113,7 +119,10 @@ export default function ProductDetails() {
 
           <div className='flex items-center justify-between rounded-xl border border-neutral-800 bg-neutral-950 p-4'>
             <div className='text-2xl font-bold text-white'>
-              ${Number(selectedProduct.price).toFixed(2)}
+              {formatCurrency(
+                convertFromUSD(selectedProduct.price, rate),
+                currency,
+              )}
             </div>
             <div className='text-sm text-neutral-400'>
               Stock:{' '}

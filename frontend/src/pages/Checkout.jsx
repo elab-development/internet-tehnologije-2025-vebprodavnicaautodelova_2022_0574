@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
 import { useOrdersStore } from '../stores/ordersStore';
+import { useCurrencyStore } from '../stores/currencyStore';
+import { convertFromUSD, formatCurrency } from '../lib/currency';
 
 export default function Checkout() {
   const user = useAuthStore((s) => s.user);
@@ -15,6 +17,10 @@ export default function Checkout() {
   const createOrder = useOrdersStore((s) => s.createOrder);
   const isLoading = useOrdersStore((s) => s.isLoading);
   const error = useOrdersStore((s) => s.error);
+
+  const currency = useCurrencyStore((s) => s.currency);
+  const rates = useCurrencyStore((s) => s.rates);
+  const rate = rates[currency] || 1;
 
   const hasProfileAddress = Boolean(user?.deliveryAddress?.trim());
   const [address, setAddress] = useState('');
@@ -138,7 +144,8 @@ export default function Checkout() {
                 <span className='text-neutral-100'>{it.quantity}</span>
               </span>
               <span className='text-neutral-200'>
-                ${(it.price * it.quantity).toFixed(2)}
+                {convertFromUSD(it.price * it.quantity, rate).toFixed(2)}{' '}
+                {currency}
               </span>
             </div>
           ))}
@@ -147,7 +154,7 @@ export default function Checkout() {
           <div className='flex justify-between text-neutral-200'>
             <span>Total</span>
             <span className='text-lg font-bold text-white'>
-              ${subtotal.toFixed(2)}
+              {formatCurrency(convertFromUSD(subtotal, rate), currency)}
             </span>
           </div>
 

@@ -5,15 +5,17 @@ import { useAuthStore } from '../stores/authStore';
 import UsersTab from '../components/admin/UsersTab';
 import ProductsTab from '../components/admin/ProductsTab';
 import OrdersTab from '../components/admin/OrdersTab';
+import OverviewTab from '../components/admin/OverviewTab';
 
 export default function AdminDashboard() {
   const user = useAuthStore((s) => s.user);
-  const [tab, setTab] = useState('users'); // users | products | orders
+  const [tab, setTab] = useState('overview'); // overview | users | products | orders
 
   const isAdmin = user?.role === 'admin';
 
   const tabs = useMemo(
     () => [
+      { key: 'overview', label: 'Overview' },
       { key: 'users', label: 'Users' },
       { key: 'products', label: 'Products' },
       { key: 'orders', label: 'Orders' },
@@ -60,7 +62,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Desktop tabs */}
-          <div className='hidden sm:grid sm:grid-cols-3'>
+          <div className='hidden sm:grid sm:grid-cols-4'>
             {tabs.map((t) => {
               const active = tab === t.key;
               return (
@@ -85,6 +87,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Content */}
+      {tab === 'overview' ? <OverviewTab /> : null}
       {tab === 'users' ? <UsersTab /> : null}
       {tab === 'products' ? <ProductsTab /> : null}
       {tab === 'orders' ? <OrdersTab /> : null}

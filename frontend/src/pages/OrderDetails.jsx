@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useOrdersStore } from '../stores/ordersStore';
 import { useAuthStore } from '../stores/authStore';
+import { useCurrencyStore } from '../stores/currencyStore';
+import { convertFromUSD, formatCurrency } from '../lib/currency';
 
 export default function OrderDetails() {
   const { orderId } = useParams();
@@ -12,6 +14,10 @@ export default function OrderDetails() {
   const error = useOrdersStore((s) => s.error);
   const fetchOrderById = useOrdersStore((s) => s.fetchOrderById);
   const updateOrderStatus = useOrdersStore((s) => s.updateOrderStatus);
+
+  const currency = useCurrencyStore((s) => s.currency);
+  const rates = useCurrencyStore((s) => s.rates);
+  const rate = rates[currency] || 1;
 
   useEffect(() => {
     fetchOrderById(orderId);
@@ -97,7 +103,10 @@ export default function OrderDetails() {
           <div>
             <span className='text-neutral-500'>Total:</span>{' '}
             <span className='text-neutral-100 font-bold'>
-              ${Number(order.totalAmount).toFixed(2)}
+              {formatCurrency(
+                convertFromUSD(order.totalAmount, rate),
+                currency,
+              )}
             </span>
           </div>
           <div>
@@ -139,7 +148,11 @@ export default function OrderDetails() {
                         {it.product?.name || `Product #${it.productId}`}
                       </div>
                       <div className='text-sm text-neutral-400'>
-                        Unit price: ${Number(it.price).toFixed(2)}
+                        Unit price:{' '}
+                        {formatCurrency(
+                          convertFromUSD(it.price, rate),
+                          currency,
+                        )}
                       </div>
                       <div className='text-sm text-neutral-400'>
                         Qty:{' '}
@@ -150,7 +163,11 @@ export default function OrderDetails() {
                     <div className='text-sm text-neutral-300'>
                       Line total:{' '}
                       <span className='font-bold text-white'>
-                        ${(Number(it.price) * it.quantity).toFixed(2)}
+                        {convertFromUSD(
+                          Number(it.price) * it.quantity,
+                          rate,
+                        ).toFixed(2)}{' '}
+                        {currency}
                       </span>
                     </div>
                   </div>

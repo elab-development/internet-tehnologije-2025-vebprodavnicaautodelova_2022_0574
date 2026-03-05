@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+import { useCurrencyStore } from '../../stores/currencyStore';
+import { convertFromUSD, formatCurrency } from '../../lib/currency';
 
 const badge = (status) => {
   const base =
@@ -26,6 +28,10 @@ export default function OrdersList({
   onPrev,
   onNext,
 }) {
+  const currency = useCurrencyStore((s) => s.currency);
+  const rates = useCurrencyStore((s) => s.rates);
+  const rate = rates[currency] || 1;
+
   if (!orders?.length) {
     return (
       <div className='rounded-xl border border-neutral-800 bg-neutral-950 p-4 text-sm text-neutral-300'>
@@ -55,7 +61,10 @@ export default function OrdersList({
               <div className='text-sm text-neutral-300'>
                 Total:{' '}
                 <span className='font-bold text-white'>
-                  ${Number(o.totalAmount).toFixed(2)}
+                  {formatCurrency(
+                    convertFromUSD(o.totalAmount, rate),
+                    currency,
+                  )}
                 </span>
               </div>
             </div>

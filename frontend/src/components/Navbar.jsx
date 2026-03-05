@@ -11,11 +11,17 @@ import {
 import LogoImg from '../assets/logo.png';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
+import { useCurrencyStore } from '../stores/currencyStore';
 
 export default function Navbar() {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const cartCount = useCartStore((s) => s.itemsCount);
+
+  const currency = useCurrencyStore((s) => s.currency);
+  const setCurrency = useCurrencyStore((s) => s.setCurrency);
+  const rates = useCurrencyStore((s) => s.rates || {});
+  const currencyLoading = useCurrencyStore((s) => s.isLoading);
 
   const isAdmin = user?.role === 'admin';
 
@@ -85,6 +91,29 @@ export default function Navbar() {
               {l.label}
             </NavLink>
           ))}
+
+          {user?.role !== 'admin' && (
+            <select
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+              disabled={
+                currencyLoading || Object.keys(rates || {}).length === 0
+              }
+              className='rounded-md border border-neutral-800 bg-neutral-900 px-2 py-2 text-sm text-white disabled:opacity-60'
+            >
+              {Object.keys(rates || {}).length === 0 ? (
+                <option value='USD'>Loading...</option>
+              ) : (
+                Object.keys(rates)
+                  .slice(0, 20)
+                  .map((cur) => (
+                    <option key={cur} value={cur}>
+                      {cur}
+                    </option>
+                  ))
+              )}
+            </select>
+          )}
 
           {user ? (
             <div className='ml-2 flex items-center gap-2'>
@@ -182,6 +211,29 @@ export default function Navbar() {
                   {l.label}
                 </NavLink>
               ))}
+
+              {user?.role !== 'admin' && (
+                <select
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value)}
+                  disabled={
+                    currencyLoading || Object.keys(rates || {}).length === 0
+                  }
+                  className='rounded-md border border-neutral-800 bg-neutral-900 px-2 py-2 text-sm text-white disabled:opacity-60'
+                >
+                  {Object.keys(rates || {}).length === 0 ? (
+                    <option value='USD'>Loading...</option>
+                  ) : (
+                    Object.keys(rates)
+                      .slice(0, 20)
+                      .map((cur) => (
+                        <option key={cur} value={cur}>
+                          {cur}
+                        </option>
+                      ))
+                  )}
+                </select>
+              )}
 
               {user ? (
                 <>

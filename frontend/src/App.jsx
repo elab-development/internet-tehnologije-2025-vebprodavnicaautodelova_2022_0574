@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import { useAuthStore } from './stores/authStore';
+import { useCurrencyStore } from './stores/currencyStore';
 
 import AppLayout from './layouts/AppLayout';
 import RequireAuth from './components/auth/RequireAuth';
@@ -23,10 +24,12 @@ import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   const fetchMe = useAuthStore((s) => s.fetchMe);
+  const loadRates = useCurrencyStore((s) => s.loadRates);
 
   useEffect(() => {
     fetchMe();
-  }, [fetchMe]);
+    loadRates();
+  }, [fetchMe, loadRates]);
 
   return (
     <BrowserRouter>

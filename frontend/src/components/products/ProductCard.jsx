@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { FiPlus } from 'react-icons/fi';
 import { useAuthStore } from '../../stores/authStore';
 import { useCartStore } from '../../stores/cartStore';
+import { useCurrencyStore } from '../../stores/currencyStore';
+import { convertFromUSD, formatCurrency } from '../../lib/currency';
 
 export default function ProductCard({ product }) {
   const user = useAuthStore((s) => s.user);
@@ -9,6 +11,12 @@ export default function ProductCard({ product }) {
 
   const firstImg = Array.isArray(product.images) ? product.images[0] : null;
   const imgUrl = firstImg?.url || firstImg?.secureUrl || '';
+
+  const currency = useCurrencyStore((s) => s.currency);
+  const rates = useCurrencyStore((s) => s.rates);
+
+  const rate = rates[currency] || 1;
+  const converted = convertFromUSD(product.price, rate);
 
   return (
     <div className='overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900'>
@@ -38,7 +46,7 @@ export default function ProductCard({ product }) {
 
           <div className='mt-3 flex items-center justify-between'>
             <div className='text-lg font-bold text-white'>
-              ${Number(product.price).toFixed(2)}
+              {formatCurrency(converted, currency)}
             </div>
             <div className='text-xs text-neutral-400'>
               Stock: <span className='text-neutral-200'>{product.stock}</span>

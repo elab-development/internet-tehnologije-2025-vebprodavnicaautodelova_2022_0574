@@ -2,6 +2,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FiTrash2 } from 'react-icons/fi';
 import { useCartStore } from '../stores/cartStore';
 import { useAuthStore } from '../stores/authStore';
+import { useCurrencyStore } from '../stores/currencyStore';
+import { convertFromUSD, formatCurrency } from '../lib/currency';
 
 export default function Cart() {
   const user = useAuthStore((s) => s.user);
@@ -11,6 +13,10 @@ export default function Cart() {
   const subtotal = useCartStore((s) => s.subtotal);
   const setQuantity = useCartStore((s) => s.setQuantity);
   const removeFromCart = useCartStore((s) => s.removeFromCart);
+
+  const currency = useCurrencyStore((s) => s.currency);
+  const rates = useCurrencyStore((s) => s.rates);
+  const rate = rates[currency] || 1;
 
   if (!user) {
     return (
@@ -68,7 +74,11 @@ export default function Cart() {
                           {it.name}
                         </div>
                         <div className='text-sm text-neutral-400'>
-                          ${Number(it.price).toFixed(2)} each
+                          {formatCurrency(
+                            convertFromUSD(it.price, rate),
+                            currency,
+                          )}{' '}
+                          each
                         </div>
                       </div>
 
@@ -99,7 +109,10 @@ export default function Cart() {
                       <div className='text-sm text-neutral-300'>
                         Line total:{' '}
                         <span className='font-bold text-white'>
-                          ${(it.price * it.quantity).toFixed(2)}
+                          {convertFromUSD(it.price * it.quantity, rate).toFixed(
+                            2,
+                          )}{' '}
+                          {currency}
                         </span>
                       </div>
                     </div>
@@ -128,7 +141,7 @@ export default function Cart() {
           <div className='flex justify-between text-neutral-300'>
             <span>Subtotal</span>
             <span className='font-semibold text-white'>
-              ${subtotal.toFixed(2)}
+              {formatCurrency(convertFromUSD(subtotal, rate), currency)}
             </span>
           </div>
           <div className='flex justify-between text-neutral-500'>
@@ -139,7 +152,7 @@ export default function Cart() {
           <div className='flex justify-between text-neutral-200'>
             <span>Total</span>
             <span className='text-lg font-bold text-white'>
-              ${subtotal.toFixed(2)}
+              {formatCurrency(convertFromUSD(subtotal, rate), currency)}
             </span>
           </div>
         </div>
