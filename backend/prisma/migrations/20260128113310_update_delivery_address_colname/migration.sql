@@ -5,5 +5,5 @@
 
 */
 -- AlterTable
-ALTER TABLE `user` DROP COLUMN `deliveryAddres`,
+ALTER TABLE `User` DROP COLUMN `deliveryAddres`,
     ADD COLUMN `deliveryAddress` VARCHAR(191) NULL;

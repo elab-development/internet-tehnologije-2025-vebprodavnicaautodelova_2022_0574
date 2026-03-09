@@ -8,10 +8,10 @@
 
 */
 -- AlterTable
-ALTER TABLE `order` ADD COLUMN `userId` INTEGER NOT NULL;
+ALTER TABLE `Order` ADD COLUMN `userId` INTEGER NOT NULL;
 
 -- AlterTable
-ALTER TABLE `orderitem` ADD COLUMN `orderId` INTEGER NOT NULL,
+ALTER TABLE `OrderItem` ADD COLUMN `orderId` INTEGER NOT NULL,
     ADD COLUMN `productId` INTEGER NOT NULL;
 
 -- CreateIndex
