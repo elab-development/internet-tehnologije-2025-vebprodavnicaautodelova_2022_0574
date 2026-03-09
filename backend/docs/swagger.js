@@ -43,7 +43,7 @@ const options = {
           type: 'object',
           required: ['fullName', 'email', 'password'],
           properties: {
-            fullName: { type: 'string', example: 'Nikola Raičević' },
+            fullName: { type: 'string', example: 'Jana Jovanović' },
             email: {
               type: 'string',
               format: 'email',
@@ -75,7 +75,7 @@ const options = {
           type: 'object',
           properties: {
             id: { type: 'integer', example: 1 },
-            fullName: { type: 'string', example: 'Nikola Raičević' },
+            fullName: { type: 'string', example: 'Jana Jovanović' },
             email: {
               type: 'string',
               format: 'email',
